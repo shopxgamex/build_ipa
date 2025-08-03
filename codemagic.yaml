@@ -1,18 +1,9 @@
 workflows:
-  build-unsigned-ipa:
-    name: Build Unity Xcode Project (Linux)
-    max_build_duration: 60
-    environment:
-      docker: 
-        image: ghcr.io/game-ci/unity-editor:2022.3.6f1-ios  # Gợi ý dùng image có sẵn này
-    scripts:
-      - name: Build Xcode project from Unity
-        script: |
-          /opt/unity/Editor/Unity \
-            -batchmode -nographics -quit \
-            -projectPath . \
-            -buildTarget iOS \
-            -executeMethod BuildScript.PerformBuildIOS
 
-    artifacts:
-      - ios_build/**
+    sample-workflow:
+
+        name: Codemagic Sample Workflow
+
+        max_build_duration: 120
+
+        instance_type: mac_mini_m2
