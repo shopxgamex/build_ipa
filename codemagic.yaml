@@ -1,27 +1,13 @@
 workflows:
-  build-unsigned-ipa:
-    name: Build Unsigned IPA (Unity)
+  build-ipa-only:
+    name: Export IPA from Xcode Project
     environment:
-      vars:
-        UNITY_VERSION: 2022.3.62f1   # ← sửa theo phiên bản bạn đang dùng
       xcode: latest
       cocoapods: default
     scripts:
-      - name: Set up Unity
+      - name: Build IPA
         script: |
-          curl -sSL https://raw.githubusercontent.com/game-ci/unity-actions/main/setup-unity.sh | bash -s $UNITY_VERSION
-
-      - name: Build Xcode project from Unity
-        script: |
-          /Applications/Unity/Hub/Editor/$UNITY_VERSION/Unity.app/Contents/MacOS/Unity \
-            -batchmode -nographics -quit \
-            -projectPath . \
-            -buildTarget iOS \
-            -executeMethod BuildScript.PerformBuildIOS
-
-      - name: Export IPA (unsigned)
-        script: |
-          xcodebuild -project ios_build/Unity-iPhone.xcodeproj \
+          xcodebuild -project "build/Unity-iPhone.xcodeproj" \
             -scheme Unity-iPhone \
             -configuration Release \
             -archivePath build/Unity.xcarchive \
