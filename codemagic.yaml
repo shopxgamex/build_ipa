@@ -1,34 +1,18 @@
 workflows:
   build-unsigned-ipa:
-    name: Build Unsigned IPA (Unity)
+    name: Build Unity Xcode Project (Linux)
     max_build_duration: 60
     environment:
-      vars:
-        UNITY_VERSION: 2022.3.62f1
-      xcode: latest
-      cocoapods: default
+      docker: 
+        image: ghcr.io/game-ci/unity-editor:2022.3.6f1-ios  # Gợi ý dùng image có sẵn này
     scripts:
       - name: Build Xcode project from Unity
         script: |
-          /Applications/Unity/Hub/Editor/$UNITY_VERSION/Unity.app/Contents/MacOS/Unity \
+          /opt/unity/Editor/Unity \
             -batchmode -nographics -quit \
             -projectPath . \
             -buildTarget iOS \
             -executeMethod BuildScript.PerformBuildIOS
 
-      - name: Export IPA (unsigned)
-        script: |
-          xcodebuild -project ios_build/Unity-iPhone.xcodeproj \
-            -scheme Unity-iPhone \
-            -configuration Release \
-            -archivePath build/Unity.xcarchive \
-            archive
-
-          xcodebuild -exportArchive \
-            -archivePath build/Unity.xcarchive \
-            -exportOptionsPlist ExportOptions.plist \
-            -exportPath build/ipa_unsigned \
-            -allowProvisioningUpdates
-
     artifacts:
-      - build/ipa_unsigned/*.ipa
+      - ios_build/**
