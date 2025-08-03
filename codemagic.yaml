@@ -1,45 +1,21 @@
 workflows:
-  unity-ios-build:
-    name: Build Unity Project for iOS
-    max_build_duration: 60
+  sample-workflow:
+    name: Codemagic Sample Workflow
     instance_type: mac_mini_m2
-
+    max_build_duration: 120
     environment:
       vars:
-        UNITY_VERSION: 2022.3.6f1
-      xcode: latest
-      cocoapods: default
-      node: 16.14.2
+        UNITY_PATH: /Applications/Unity/Hub/Editor/2022.3.62f1/Unity.app/Contents/MacOS/Unity
 
     scripts:
-      - name: Install Unity
+      - name: Build Xcode project from Unity
         script: |
-          brew tap homebrew/cask
-          brew install --cask unity-hub
-          echo "⚠️ Bạn cần cài Unity từ Codemagic hoặc link trực tiếp."
+          $UNITY_PATH -batchmode -nographics -quit -projectPath . -executeMethod BuildScript.BuildIOS
 
-      - name: Build Unity project to Xcode
+      - name: Export IPA
         script: |
-          /Applications/Unity/Hub/Editor/$UNITY_VERSION/Unity.app/Contents/MacOS/Unity \
-            -batchmode -nographics -quit \
-            -projectPath . \
-            -executeMethod BuildScript.PerformiOSBuild \
-            -logFile unity_build.log
-
-      - name: Export IPA (unsigned)
-        script: |
-          xcodebuild -project ios/Unity-iPhone.xcodeproj \
-                     -scheme Unity-iPhone \
-                     -sdk iphoneos \
-                     -configuration Release \
-                     -archivePath $CM_BUILD_DIR/build/Unity.xcarchive \
-                     archive
-
-          xcodebuild -exportArchive \
-                     -archivePath $CM_BUILD_DIR/build/Unity.xcarchive \
-                     -exportPath $CM_BUILD_DIR/build/export \
-                     -exportOptionsPlist exportOptions.plist
+          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner archive -archivePath build/Runner.xcarchive
+          xcodebuild -exportArchive -archivePath build/Runner.xcarchive -exportOptionsPlist exportOptions.plist -exportPath build/export
 
     artifacts:
       - build/export/*.ipa
-      - unity_build.log
