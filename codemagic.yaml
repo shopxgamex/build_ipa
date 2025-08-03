@@ -3,7 +3,7 @@ workflows:
     name: Build Unsigned IPA (Unity)
     environment:
       vars:
-        UNITY_VERSION: 2022.3.16f1   # ← sửa theo phiên bản bạn đang dùng
+        UNITY_VERSION: 2022.3.62f1   # ← sửa theo phiên bản bạn đang dùng
       xcode: latest
       cocoapods: default
     scripts:
